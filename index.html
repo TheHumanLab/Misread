@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Misread Diagnostic — The Human Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --white:      #ffffff;
+      --off-white:  #f7f6f4;
+      --paper:      #f2efe9;
+      --rule:       #e2ddd6;
+      --text-dim:   #9a9590;
+      --text-body:  #3a3835;
+      --text-head:  #181714;
+      --ink:        #1a1917;
+      --gold:       #b59a6a;
+      --gold-pale:  #eddfc4;
+      --charcoal:   #2c2b29;
+      --deep:       #141312;
+
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'DM Sans', sans-serif;
+      --max: 1080px;
+      --col: clamp(1.5rem, 5vw, 5rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--off-white);
+      color: var(--text-body);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      max-width: var(--max);
+      margin-inline: auto;
+      padding-inline: var(--col);
+    }
+
+    /* ─── NAV ────────────────────────────────────────── */
+    .nav {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--rule);
+      background: var(--off-white);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .nav__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav__brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .nav__line { width: 2rem; height: 1px; background: var(--gold); }
+    .nav__name {
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .nav__suite {
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .nav__suite span {
+      color: var(--gold);
+      margin-right: 0.4rem;
+    }
+
+    /* ─── BUTTON ─────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.9rem 2.25rem;
+      background: var(--ink);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+      transition: background 0.22s, color 0.22s;
+    }
+    .btn:hover { background: transparent; color: var(--ink); }
+    .btn svg { width: 13px; height: 13px; transition: transform 0.2s; }
+    .btn:hover svg { transform: translateX(3px); }
+
+    .label {
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ═══════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════ */
+    .hero {
+      padding: 6rem 0 5rem;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: 'MISREAD';
+      position: absolute;
+      right: -2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: clamp(8rem, 18vw, 16rem);
+      font-weight: 300;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--rule);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.03em;
+    }
+    .hero__suite {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.5s ease both;
+    }
+    .hero__suite-line { width: 2.5rem; height: 1px; background: var(--gold); }
+    .hero__suite-text {
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .hero__tag {
+      display: inline-block;
+      border: 1px solid var(--gold);
+      padding: 0.3rem 0.85rem;
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.5s 0.05s ease both;
+    }
+    .hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text-head);
+      max-width: 14ch;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+    .hero__title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero__body {
+      max-width: 50ch;
+      font-size: 1.0625rem;
+      color: var(--text-body);
+      line-height: 1.75;
+      margin-bottom: 2.75rem;
+      animation: fadeUp 0.5s 0.15s ease both;
+    }
+    .hero__body strong {
+      color: var(--text-head);
+      font-weight: 500;
+    }
+    .hero__cta { animation: fadeUp 0.5s 0.2s ease both; }
+    .hero__meta {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      animation: fadeUp 0.5s 0.25s ease both;
+    }
+    .hero__meta span { margin: 0 0.35rem; color: var(--rule); }
+
+    /* ═══════════════════════════════════════════════
+       RECOGNITION STRIP
+    ═══════════════════════════════════════════════ */
+    .recognition {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--rule);
+      background: var(--white);
+    }
+    .recognition__inner {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .recognition__item {
+      padding: 1.5rem 2.5rem;
+      border-right: 1px solid var(--rule);
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .recognition__item:last-child { border-right: none; }
+    .recognition__num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      color: var(--gold);
+      line-height: 1;
+      flex-shrink: 0;
+      font-weight: 300;
+    }
+    .recognition__text {
+      font-size: 0.875rem;
+      color: var(--text-body);
+      line-height: 1.55;
+      padding-top: 0.2rem;
+    }
+    .recognition__text strong {
+      display: block;
+      color: var(--text-head);
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+      font-size: 0.9375rem;
+    }
+
+    /* ═══════════════════════════════════════════════
+       THE PROBLEM
+    ═══════════════════════════════════════════════ */
+    .problem {
+      padding: 6rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .problem__inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 6rem;
+      align-items: start;
+    }
+    .problem__left .label { margin-bottom: 1.5rem; }
+    .problem__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 2.9rem);
+      font-weight: 400;
+      color: var(--text-head);
+      line-height: 1.15;
+      max-width: 18ch;
+    }
+    .problem__title em { font-style: italic; color: var(--gold); }
+    .problem__pull {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2vw, 1.5rem);
+      font-style: italic;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin-top: 2rem;
+      padding-left: 1.25rem;
+      border-left: 2px solid var(--gold);
+    }
+    .problem__right {
+      padding-top: 0.5rem;
+    }
+    .problem__body {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-body);
+      margin-bottom: 1.5rem;
+    }
+    .problem__body strong { color: var(--text-head); font-weight: 500; }
+    .problem__signals {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 2rem;
+    }
+    .problem__signal {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--rule);
+      font-size: 0.9375rem;
+      color: var(--text-body);
+    }
+    .problem__signal:first-child { border-top: 1px solid var(--rule); }
+    .problem__signal::before {
+      content: '—';
+      color: var(--gold);
+      flex-shrink: 0;
+      font-family: var(--font-display);
+    }
+
+    /* ═══════════════════════════════════════════════
+       WHAT YOU GET
+    ═══════════════════════════════════════════════ */
+    .deliverables {
+      padding: 6rem 0;
+      background: var(--deep);
+      border-bottom: 1px solid #2a2927;
+    }
+    .deliverables .label { color: var(--gold); margin-bottom: 1.5rem; }
+    .deliverables__inner {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 6rem;
+      align-items: start;
+    }
+    .deliverables__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .deliverables__title em { font-style: italic; color: var(--gold); }
+    .deliverables__sub {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.4);
+      max-width: 28ch;
+      line-height: 1.65;
+    }
+    .deliverables__list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .deliverable {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr;
+      gap: 1.25rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      align-items: start;
+    }
+    .deliverable:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+    .deliverable__n {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      color: var(--gold);
+      font-weight: 300;
+      padding-top: 0.1rem;
+    }
+    .deliverable__body strong {
+      display: block;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 0.25rem;
+    }
+    .deliverable__body span {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HOW IT WORKS
+    ═══════════════════════════════════════════════ */
+    .process {
+      padding: 6rem 0;
+      border-bottom: 1px solid var(--rule);
+      background: var(--white);
+    }
+    .process__header { margin-bottom: 4rem; }
+    .process__header .label { margin-bottom: 1.25rem; }
+    .process__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 400;
+      color: var(--text-head);
+    }
+    .process__steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .process__step {
+      padding: 2rem 2.5rem 2rem 0;
+      border-right: 1px solid var(--rule);
+    }
+    .process__step:last-child { border-right: none; padding-right: 0; }
+    .process__step:not(:first-child) { padding-left: 2.5rem; }
+    .process__step-num {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      color: var(--rule);
+      line-height: 1;
+      margin-bottom: 1.25rem;
+      font-weight: 300;
+    }
+    .process__step-title {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-head);
+      margin-bottom: 0.5rem;
+    }
+    .process__step-body {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+
+    /* ═══════════════════════════════════════════════
+       PRICE
+    ═══════════════════════════════════════════════ */
+    .price {
+      padding: 7rem 0;
+      border-bottom: 1px solid var(--rule);
+      text-align: center;
+      background: var(--paper);
+    }
+    .price .label { margin-bottom: 1.5rem; }
+    .price__amount {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 12vw, 8rem);
+      font-weight: 300;
+      color: var(--text-head);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+    }
+    .price__amount sup {
+      font-size: 0.35em;
+      vertical-align: super;
+      color: var(--gold);
+    }
+    .price__line {
+      width: 3rem;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.25rem auto;
+    }
+    .price__tagline {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      margin-bottom: 2.5rem;
+    }
+    .price__tagline span { margin: 0 0.4rem; color: var(--rule); }
+
+    /* ═══════════════════════════════════════════════
+       FAQ
+    ═══════════════════════════════════════════════ */
+    .faq {
+      padding: 6rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .faq__header { margin-bottom: 3.5rem; }
+    .faq__header .label { margin-bottom: 1rem; }
+    .faq__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+      font-weight: 400;
+      color: var(--text-head);
+    }
+    .faq__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem 5rem;
+    }
+    .faq__q {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-head);
+      margin-bottom: 0.5rem;
+    }
+    .faq__a {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+
+    /* ═══════════════════════════════════════════════
+       FINAL CTA
+    ═══════════════════════════════════════════════ */
+    .cta {
+      padding: 7rem 0;
+      text-align: center;
+      border-bottom: 1px solid var(--rule);
+      background: var(--white);
+    }
+    .cta .label { margin-bottom: 1.5rem; }
+    .cta__title {
+      font-family: var(--font-display);
+      font-size: clamp(2.25rem, 5vw, 3.75rem);
+      font-weight: 300;
+      color: var(--text-head);
+      max-width: 22ch;
+      margin-inline: auto;
+      margin-bottom: 0.75rem;
+      line-height: 1.15;
+    }
+    .cta__title em { font-style: italic; color: var(--gold); }
+    .cta__sub-title {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.125rem;
+      color: var(--text-dim);
+      margin-bottom: 2.5rem;
+    }
+    .cta__meta {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 1.25rem;
+      letter-spacing: 0.04em;
+    }
+    .cta__meta span { margin: 0 0.35rem; color: var(--rule); }
+
+    /* ═══════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════ */
+    .footer {
+      padding: 2.5rem 0;
+      background: var(--deep);
+    }
+    .footer__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .footer__brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .footer__line { width: 1.5rem; height: 1px; background: var(--gold); }
+    .footer__name {
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+    .footer__sub {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+    }
+    .footer__tag {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.8125rem;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 800px) {
+      .problem__inner,
+      .deliverables__inner,
+      .recognition__inner,
+      .process__steps,
+      .faq__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .recognition__item { border-right: none; border-bottom: 1px solid var(--rule); padding: 1.5rem 0; }
+      .recognition__item:last-child { border-bottom: none; }
+      .process__step { border-right: none; border-bottom: 1px solid var(--rule); padding: 2rem 0; }
+      .process__step:last-child { border-bottom: none; }
+      .process__step:not(:first-child) { padding-left: 0; }
+      .footer__inner { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .hero::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="wrap">
+    <div class="nav__inner">
+      <div class="nav__brand">
+        <span class="nav__line"></span>
+        <span class="nav__name">The Human Lab</span>
+      </div>
+      <span class="nav__suite"><span>Individual</span> Diagnostic Series</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ════════════════════════════════════════ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero__suite">
+      <span class="hero__suite-line"></span>
+      <span class="hero__suite-text">The Human Lab · Individual Series</span>
+    </div>
+    <div class="hero__tag">New Diagnostic</div>
+    <h1 class="hero__title">You are not the problem.<br><em>You're being read wrong.</em></h1>
+    <p class="hero__body">
+      Most people who feel overlooked, underestimated, or misplaced aren't lacking ability. They're emitting signals that others are misreading. <strong>The Misread Diagnostic identifies exactly what those signals are — and what to do about them.</strong>
+    </p>
+    <div class="hero__cta">
+      <!-- ── EDIT: replace with your Stripe link ── -->
+      <a class="btn" href="https://buy.stripe.com/YOUR_MISREAD_LINK" target="_blank" rel="noopener">
+        Start Your Diagnostic
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+      </a>
+    </div>
+    <p class="hero__meta">$137 <span>·</span> Fixed price <span>·</span> Delivered in 3–5 days</p>
+  </div>
+</section>
+
+<!-- ═══ RECOGNITION STRIP ════════════════════════════ -->
+<section class="recognition">
+  <div class="wrap">
+    <div class="recognition__inner">
+      <div class="recognition__item">
+        <span class="recognition__num">01</span>
+        <div class="recognition__text">
+          <strong>You know your own value</strong>
+          You have experience, ability, and results. The problem is not what you have — it's what others see.
+        </div>
+      </div>
+      <div class="recognition__item">
+        <span class="recognition__num">02</span>
+        <div class="recognition__text">
+          <strong>Something isn't landing</strong>
+          Rooms don't respond the way they should. You leave conversations feeling slightly off. You can't name it but you feel it.
+        </div>
+      </div>
+      <div class="recognition__item">
+        <span class="recognition__num">03</span>
+        <div class="recognition__text">
+          <strong>You can't read your own label</strong>
+          The signals you send are invisible to you — but obvious to everyone else. That's why the diagnosis has to come from outside.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE PROBLEM ══════════════════════════════════ -->
+<section class="problem">
+  <div class="wrap">
+    <div class="problem__inner">
+      <div class="problem__left">
+        <p class="label">The problem</p>
+        <h2 class="problem__title">Being misread is <em>structural,</em> not personal</h2>
+        <p class="problem__pull">"You can't read your own label from inside the jar."</p>
+      </div>
+      <div class="problem__right">
+        <p class="problem__body">
+          The gap between who you are and how you're perceived isn't a confidence problem. It isn't a likability problem. It's a <strong>signal problem.</strong> Something in the way you communicate, present, or position yourself is being interpreted differently from how you intend it — and you can't see it because you're too close.
+        </p>
+        <p class="problem__body">
+          This happens to highly capable people constantly. They get filed into the wrong category. Passed over for things they're clearly right for. Respected but not selected. Liked but not taken seriously. Known but not called.
+        </p>
+        <p class="problem__body">The signals causing this are specific, identifiable, and fixable. That's what this diagnostic is for.</p>
+        <ul class="problem__signals">
+          <li class="problem__signal">You're consistently underestimated by people who don't know you yet</li>
+          <li class="problem__signal">You feel like you have to prove yourself in rooms you've already earned</li>
+          <li class="problem__signal">People assume things about you that are frustratingly inaccurate</li>
+          <li class="problem__signal">You leave conversations feeling like something got lost in translation</li>
+          <li class="problem__signal">The version of you that others describe doesn't quite match who you are</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHAT YOU GET ═════════════════════════════════ -->
+<section class="deliverables">
+  <div class="wrap">
+    <div class="deliverables__inner">
+      <div>
+        <p class="label">What you receive</p>
+        <h2 class="deliverables__title">A report that names what others <em>won't.</em></h2>
+        <p class="deliverables__sub">Delivered as a structured PDF. Written specifically for you — not a template with your name on it.</p>
+      </div>
+      <div class="deliverables__list">
+        <div class="deliverable">
+          <span class="deliverable__n">01</span>
+          <div class="deliverable__body">
+            <strong>Your Misread Analysis</strong>
+            <span>A precise breakdown of how you are currently being perceived versus how you intend to come across — and where the gap lives.</span>
+          </div>
+        </div>
+        <div class="deliverable">
+          <span class="deliverable__n">02</span>
+          <div class="deliverable__body">
+            <strong>Signal Identification</strong>
+            <span>The specific signals — behavioural, communicative, or presentational — that are generating the wrong read in others.</span>
+          </div>
+        </div>
+        <div class="deliverable">
+          <span class="deliverable__n">03</span>
+          <div class="deliverable__body">
+            <strong>The Category Problem</strong>
+            <span>What category people are filing you into, why that category is wrong, and what category you actually belong in.</span>
+          </div>
+        </div>
+        <div class="deliverable">
+          <span class="deliverable__n">04</span>
+          <div class="deliverable__body">
+            <strong>Correction Angles</strong>
+            <span>Specific, practical adjustments to how you present, communicate, and position yourself to close the perception gap.</span>
+          </div>
+        </div>
+        <div class="deliverable">
+          <span class="deliverable__n">05</span>
+          <div class="deliverable__body">
+            <strong>3 Immediate Moves</strong>
+            <span>Three concrete actions you can take immediately — without changing who you are — to shift how you are being read.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═════════════════════════════════ -->
+<section class="process">
+  <div class="wrap">
+    <div class="process__header">
+      <p class="label">The process</p>
+      <h2 class="process__title">Three steps. No calls. No complexity.</h2>
+    </div>
+    <div class="process__steps">
+      <div class="process__step">
+        <div class="process__step-num">01</div>
+        <p class="process__step-title">Purchase the diagnostic</p>
+        <p class="process__step-body">One fixed payment. You're in immediately. No discovery call, no waitlist, no negotiation.</p>
+      </div>
+      <div class="process__step">
+        <div class="process__step-num">02</div>
+        <p class="process__step-title">Complete the intake</p>
+        <p class="process__step-body">A focused questionnaire designed to surface the perception gap. Honest answers produce sharper reports.</p>
+      </div>
+      <div class="process__step">
+        <div class="process__step-num">03</div>
+        <p class="process__step-title">Receive your report</p>
+        <p class="process__step-body">Your Misread Diagnostic delivered as a structured PDF within 3–5 working days. Written personally by Kaylee-Jane.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRICE ═════════════════════════════════════════ -->
+<section class="price">
+  <div class="wrap">
+    <p class="label">Diagnostic investment</p>
+    <div class="price__amount"><sup>$</sup>137</div>
+    <div class="price__line"></div>
+    <p class="price__tagline">Fixed price <span>·</span> No subscription <span>·</span> No upsells <span>·</span> No calls required</p>
+    <!-- ── EDIT: replace with your Stripe link ── -->
+    <a class="btn" href="https://buy.stripe.com/YOUR_MISREAD_LINK" target="_blank" rel="noopener">
+      Start Your Diagnostic
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══════════════════════════════════════════ -->
+<section class="faq">
+  <div class="wrap">
+    <div class="faq__header">
+      <p class="label">Common questions</p>
+      <h2 class="faq__title">What you might be wondering</h2>
+    </div>
+    <div class="faq__grid">
+      <div class="faq__item">
+        <p class="faq__q">Who is this for?</p>
+        <p class="faq__a">Anyone who has ever felt filed into the wrong category — professionally or personally. If you've sensed that others aren't seeing you accurately, this is for you.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">How is this different from the Positioning Diagnostic?</p>
+        <p class="faq__a">The Positioning Diagnostic focuses on how to present your value to the market. The Misread Diagnostic focuses on the specific signals that are causing others to misperceive you — a different and more personal problem.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">Is this therapy or coaching?</p>
+        <p class="faq__a">Neither. This is a structured written analysis. No sessions, no ongoing relationship, no homework. You receive a clear, specific report.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">How long does it take?</p>
+        <p class="faq__a">Your report is delivered within 3–5 working days of completing the intake questionnaire.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">What if I'm not sure I'm being misread?</p>
+        <p class="faq__a">If you've ever left a room feeling like something didn't land the way you intended — you're being misread somewhere. That feeling is diagnostic data in itself.</p>
+      </div>
+      <div class="faq__item">
+        <p class="faq__q">How do I receive the report?</p>
+        <p class="faq__a">As a PDF delivered to your email. No platform, no login, no portal. Just a clear document you can read, keep, and act on.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FINAL CTA ═════════════════════════════════════ -->
+<section class="cta">
+  <div class="wrap">
+    <p class="label">Get started</p>
+    <h2 class="cta__title">Find out exactly how you're being <em>read.</em></h2>
+    <p class="cta__sub-title">Then decide what to do about it.</p>
+    <!-- ── EDIT: replace with your Stripe link ── -->
+    <a class="btn" href="https://buy.stripe.com/YOUR_MISREAD_LINK" target="_blank" rel="noopener">
+      Start Your Diagnostic
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+    </a>
+    <p class="cta__meta">$137 <span>·</span> Delivered in 3–5 days <span>·</span> Written personally by Kaylee-Jane</p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <span class="footer__line"></span>
+        <span class="footer__name">The Human Lab</span>
+      </div>
+      <span class="footer__tag">"I don't quiet dysfunction, I diagnose it."</span>
+      <span class="footer__sub">Personal Structural Intelligence Services</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
