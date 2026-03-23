@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Misread Diagnostic Intake — The Human Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --white:      #ffffff;
+      --off-white:  #f7f6f4;
+      --paper:      #f2efe9;
+      --rule:       #e2ddd6;
+      --text-dim:   #9a9590;
+      --text-body:  #3a3835;
+      --text-head:  #181714;
+      --gold:       #b59a6a;
+      --gold-pale:  #eddfc4;
+      --charcoal:   #2c2b29;
+      --deep:       #141312;
+      --error:      #b03a2e;
+
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--paper);
+      color: var(--text-body);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ──────────────────────────────────── */
+    .site-header {
+      background: var(--deep);
+      padding: 1.1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-header__brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .site-header__line { width: 1.75rem; height: 1px; background: var(--gold); }
+    .site-header__name {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+    .site-header__product {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.85;
+    }
+    .site-header__tag {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* ─── PROGRESS ────────────────────────────────── */
+    .progress-track {
+      height: 2px;
+      background: rgba(0,0,0,0.08);
+    }
+    .progress-track__fill {
+      height: 100%;
+      background: var(--gold);
+      transition: width 0.55s cubic-bezier(0.4,0,0.2,1);
+      width: 0%;
+    }
+
+    /* ─── SHELL ───────────────────────────────────── */
+    .shell {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem 7rem;
+    }
+
+    /* ─── WELCOME ─────────────────────────────────── */
+    .welcome {
+      animation: fadeUp 0.55s ease both;
+    }
+    .welcome__top {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+    }
+    .welcome__top-line { width: 2.5rem; height: 1px; background: var(--gold); }
+    .welcome__top-text {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .welcome__mark {
+      width: 72px;
+      height: 72px;
+      background: var(--deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2.25rem;
+    }
+    .welcome__mark span {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--gold);
+      font-style: italic;
+      font-weight: 300;
+    }
+    .welcome__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 300;
+      color: var(--text-head);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .welcome__title em { font-style: italic; color: var(--gold); }
+    .welcome__body {
+      font-size: 0.9375rem;
+      color: var(--text-body);
+      max-width: 48ch;
+      line-height: 1.8;
+      margin-bottom: 1.25rem;
+    }
+    .welcome__note {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.0625rem;
+      color: var(--text-dim);
+      border-left: 2px solid var(--gold);
+      padding-left: 1.25rem;
+      margin: 2rem 0 2.75rem;
+      max-width: 42ch;
+      line-height: 1.6;
+    }
+    .welcome__meta {
+      font-size: 0.775rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 1.25rem;
+    }
+    .welcome__meta span { margin: 0 0.35rem; color: var(--rule); }
+
+    /* ─── STEP INDICATOR ──────────────────────────── */
+    .step-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2.25rem;
+      animation: fadeUp 0.45s ease both;
+    }
+    .step-nav__dots { display: flex; gap: 0.3rem; }
+    .step-nav__dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--rule);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .step-nav__dot.active { background: var(--gold); transform: scale(1.4); }
+    .step-nav__dot.done { background: var(--gold-pale); }
+    .step-nav__label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      margin-left: 0.25rem;
+    }
+
+    /* ─── SECTION INTRO ───────────────────────────── */
+    .sec-intro {
+      margin-bottom: 2rem;
+      animation: fadeUp 0.4s ease both;
+    }
+    .sec-intro__eyebrow {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+    .sec-intro__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+      font-weight: 400;
+      color: var(--text-head);
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+    .sec-intro__title em { font-style: italic; color: var(--gold); }
+    .sec-intro__note {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      max-width: 52ch;
+      line-height: 1.65;
+    }
+
+    /* ─── CARD ────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      padding: 2.25rem;
+      animation: fadeUp 0.4s 0.08s ease both;
+    }
+
+    /* ─── FIELDS ──────────────────────────────────── */
+    .field { margin-bottom: 2rem; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field__label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-head);
+      margin-bottom: 0.35rem;
+      line-height: 1.45;
+    }
+    .field__req { color: var(--gold); margin-left: 2px; }
+    .field__hint {
+      font-size: 0.775rem;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 0.5rem;
+      line-height: 1.55;
+    }
+    .field__sub-hint {
+      font-size: 0.725rem;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--rule);
+      background: var(--off-white);
+      color: var(--text-body);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      outline: none;
+      border-radius: 0;
+      transition: border-color 0.2s, background 0.2s;
+      appearance: none;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--gold);
+      background: var(--white);
+    }
+    textarea { resize: vertical; min-height: 110px; }
+    textarea.xl { min-height: 140px; }
+
+    /* Scale rating */
+    .scale-wrap {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
+    }
+    .scale-opt { position: relative; }
+    .scale-opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .scale-opt label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      border: 1px solid var(--rule);
+      background: var(--off-white);
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.18s;
+      font-weight: 500;
+    }
+    .scale-opt input:checked + label {
+      background: var(--deep);
+      color: var(--gold);
+      border-color: var(--deep);
+    }
+    .scale-opt label:hover { border-color: var(--gold); color: var(--text-head); }
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-top: 0.4rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* Pill checkboxes */
+    .pill-grid { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.25rem; }
+    .pill { position: relative; }
+    .pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .pill label {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--rule);
+      background: var(--off-white);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.18s;
+      user-select: none;
+    }
+    .pill input:checked + label {
+      background: var(--charcoal);
+      color: var(--white);
+      border-color: var(--charcoal);
+    }
+    .pill label:hover { border-color: var(--gold); color: var(--text-head); }
+
+    /* Field divider */
+    .field-divider {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 1.75rem 0;
+    }
+
+    /* Error */
+    .field--error input,
+    .field--error textarea { border-color: var(--error); }
+    .field__err {
+      font-size: 0.725rem;
+      color: var(--error);
+      margin-top: 0.3rem;
+      display: none;
+    }
+    .field--error .field__err { display: block; }
+
+    /* ─── NAV BUTTONS ─────────────────────────────── */
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      animation: fadeUp 0.4s 0.12s ease both;
+    }
+    .btn-back {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      padding: 0.5rem 0;
+      transition: color 0.2s;
+    }
+    .btn-back:hover { color: var(--text-head); }
+    .btn-back svg { width: 13px; height: 13px; }
+
+    .btn-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.875rem 2rem;
+      background: var(--deep);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--deep);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-next:hover { background: transparent; color: var(--deep); }
+    .btn-next svg { width: 13px; height: 13px; transition: transform 0.2s; }
+    .btn-next:hover svg { transform: translateX(3px); }
+    .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-submit {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--deep);
+      font-weight: 600;
+    }
+    .btn-submit:hover { background: transparent; color: var(--gold); }
+
+    /* ─── THANK YOU ───────────────────────────────── */
+    .thankyou {
+      display: none;
+      text-align: center;
+      padding: 4rem 0 2rem;
+    }
+    .thankyou__mark {
+      width: 60px; height: 60px;
+      border: 1px solid var(--gold);
+      margin: 0 auto 2.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .thankyou__mark svg { width: 22px; height: 22px; color: var(--gold); }
+    .thankyou__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.85rem, 4.5vw, 2.75rem);
+      font-weight: 300;
+      color: var(--text-head);
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+    .thankyou__body {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      max-width: 42ch;
+      margin: 0 auto 2rem;
+      line-height: 1.75;
+    }
+    .thankyou__quote {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.0625rem;
+      color: var(--gold);
+    }
+
+    /* ─── FORM FOOTER ─────────────────────────────── */
+    .form-footer {
+      text-align: center;
+      margin-top: 3.5rem;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      line-height: 1.8;
+    }
+    .form-footer strong {
+      display: block;
+      color: var(--text-head);
+      font-weight: 500;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeUp 0.38s ease both; }
+
+    @media (max-width: 600px) {
+      .card { padding: 1.5rem; }
+      .shell { padding: 2rem 1rem 5rem; }
+      .site-header__tag { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__brand">
+    <span class="site-header__line"></span>
+    <span class="site-header__name">The Human Lab</span>
+    <span style="color:rgba(255,255,255,0.15);margin:0 0.5rem;">·</span>
+    <span class="site-header__product">Misread Diagnostic</span>
+  </div>
+  <span class="site-header__tag">"I don't quiet dysfunction, I diagnose it."</span>
+</header>
+
+<div class="progress-track">
+  <div class="progress-track__fill" id="progressFill"></div>
+</div>
+
+<main class="shell">
+
+  <!-- ══ WELCOME ══════════════════════════════════════ -->
+  <div id="screen-welcome" class="welcome">
+    <div class="welcome__top">
+      <span class="welcome__top-line"></span>
+      <span class="welcome__top-text">Misread Diagnostic · Intake</span>
+    </div>
+    <div class="welcome__mark"><span>MR</span></div>
+    <h1 class="welcome__title">Before we begin —<br><em>a few things to know.</em></h1>
+    <p class="welcome__body">
+      This intake is designed to surface what you can't see about yourself. That requires a different kind of honesty than most questionnaires ask for.
+    </p>
+    <p class="welcome__body">
+      You'll be asked about how others respond to you, what frustrates you about perception, and moments where you felt incorrectly categorised. Don't overthink it. Don't curate it. The raw answer is almost always the most useful one.
+    </p>
+    <div class="welcome__note">
+      "The signals you're sending are invisible to you — but obvious to everyone else. This intake is how we start to see them."<br>
+      <span style="font-size:0.85rem;color:var(--gold);display:block;margin-top:0.5rem;">— Kaylee-Jane, The Human Lab</span>
+    </div>
+    <button class="btn-next" onclick="startForm()">
+      Begin Intake
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+    </button>
+    <p class="welcome__meta">8 sections <span>·</span> ~15 minutes <span>·</span> Confidential</p>
+  </div>
+
+  <!-- ══ FORM ══════════════════════════════════════════ -->
+  <div id="screen-form" style="display:none">
+    <div class="step-nav" id="stepNav">
+      <div class="step-nav__dots" id="stepDots"></div>
+      <span class="step-nav__label" id="stepLabel"></span>
+    </div>
+    <div class="sec-intro" id="secIntro">
+      <p class="sec-intro__eyebrow" id="introEyebrow"></p>
+      <h2 class="sec-intro__title" id="introTitle"></h2>
+      <p class="sec-intro__note" id="introNote"></p>
+    </div>
+    <form id="mainForm" action="https://formspree.io/f/xyknqrlo" method="POST">
+      <input type="hidden" name="diagnostic_type" value="Misread Diagnostic" />
+      <div class="card" id="fieldContainer"></div>
+      <div class="nav-row">
+        <button type="button" class="btn-back" id="btnBack" onclick="prevSection()" style="visibility:hidden">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 7H2M6 3L2 7l4 4"/></svg>
+          Back
+        </button>
+        <button type="button" class="btn-next" id="btnNext" onclick="nextSection()">
+          Continue
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ══ THANK YOU ═════════════════════════════════════ -->
+  <div id="screen-thankyou" class="thankyou">
+    <div class="thankyou__mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2 class="thankyou__title">Intake received.<br>The diagnosis begins.</h2>
+    <p class="thankyou__body">
+      Kaylee-Jane will review your responses personally. Your Misread Diagnostic report will be delivered within 3–5 working days.
+    </p>
+    <p class="thankyou__quote">"I don't quiet dysfunction, I diagnose it."</p>
+  </div>
+
+  <div class="form-footer">
+    <strong>The Human Lab</strong>
+    Misread Diagnostic · Confidential · Personal Structural Intelligence Services
+  </div>
+
+</main>
+
+<script>
+const answers = {};
+
+// ═══════════════════════════════════════════════════
+// SECTIONS — designed for deep diagnostic insight
+// ═══════════════════════════════════════════════════
+const sections = [
+
+  // ── SECTION 1: BASIC CONTEXT
+  {
+    eyebrow: "Section 1 of 8 — Basic Context",
+    title: "Who we're working with",
+    note: "Simple context first. This anchors everything that follows.",
+    fields: [
+      { id: "full_name",    label: "Full Name",           type: "text",  required: true },
+      { id: "email",        label: "Email Address",       type: "email", required: true },
+      { id: "current_role", label: "Current role or professional identity", type: "text", required: true, hint: "Not just your job title — how you actually describe yourself professionally" },
+      { id: "industry",     label: "Industry or field",   type: "text",  required: true },
+      { id: "career_stage", label: "Where are you in your career right now?", type: "textarea", required: true, hint: "Early, mid, senior, transitioning, building something — describe it in your own words" },
+    ]
+  },
+
+  // ── SECTION 2: THE MISREAD EXPERIENCE
+  {
+    eyebrow: "Section 2 of 8 — The Misread Experience",
+    title: "What you've <em>noticed</em>",
+    note: "This section surfaces the observable evidence. We're looking for patterns, not isolated incidents.",
+    fields: [
+      { id: "misread_feeling", label: "Describe a specific moment when you felt you were being read completely wrong.", type: "textarea", cls: "xl", required: true, hint: "Be specific — who, what context, what was said or assumed, how it felt. The more concrete, the more useful." },
+      { id: "misread_pattern", label: "Is this a recurring pattern or was that an isolated incident?", type: "textarea", required: true, hint: "If recurring — describe when it tends to happen. What contexts trigger it? Certain types of people? Certain environments?" },
+      { id: "category_filed", label: "What category do people tend to file you into that feels wrong?", type: "textarea", required: true, hint: "e.g. 'too junior', 'too soft', 'just the technical person', 'too intense', 'not strategic enough' — what's the incorrect label?" },
+      { id: "correct_category", label: "What category do you actually belong in?", type: "textarea", required: true, hint: "Not aspirationally — accurately. What do you know to be true about who you are and where you belong?" },
+    ]
+  },
+
+  // ── SECTION 3: PERCEPTION EVIDENCE
+  {
+    eyebrow: "Section 3 of 8 — Perception Evidence",
+    title: "What others actually <em>say and do</em>",
+    note: "We need behavioural evidence, not just feelings. Other people's reactions are data — even when they're frustrating.",
+    fields: [
+      { id: "assumptions_made",   label: "What do people consistently assume about you that is inaccurate?", type: "textarea", cls: "xl", required: true, hint: "Think about first impressions, early interactions, job interviews, new rooms. What's the assumption that keeps showing up?" },
+      { id: "surprised_reaction", label: "When people get to know you better, what are they most surprised to discover?", type: "textarea", required: true, hint: "This is diagnostic gold. The gap between first impression and reality is often exactly where the misread lives." },
+      { id: "feedback_received",  label: "What feedback have you received — formally or informally — that you disagreed with or that felt inaccurate?", type: "textarea", required: true, hint: "Performance reviews, offhand comments, things people 'meant as a compliment'. All useful." },
+      { id: "described_by_others",label: "How do you think others describe you to people who haven't met you yet?", type: "textarea", required: true, hint: "Not how you'd like them to — how you suspect they actually do. Be honest." },
+      { id: "how_you_describe_yourself", label: "How do you describe yourself to people who haven't met you yet?", type: "textarea", required: true, hint: "Note any gap between this and your answer above. That gap is often where the work is." },
+    ]
+  },
+
+  // ── SECTION 4: THE INVISIBLE SIGNALS
+  {
+    eyebrow: "Section 4 of 8 — The Invisible Signals",
+    title: "What you might be <em>transmitting</em>",
+    note: "This is the hardest section — because it requires you to turn the lens on yourself. Most people skip this work entirely. Don't.",
+    fields: [
+      { id: "rooms_reaction",   label: "When you walk into a new room or join a new group, how do people typically respond to you initially?", type: "textarea", required: true, hint: "Do they lean in or pull back? Ask questions or make statements about you? Treat you as senior or junior? Warm or neutral?" },
+      { id: "communication_style", label: "How would you describe your natural communication style?", type: "textarea", required: true, hint: "Think about pace, directness, volume, detail-level, formality. Are you better in writing or speech? One-on-one or groups?" },
+      { id: "what_you_lead_with", label: "What do you tend to lead with when meeting someone new professionally?", type: "textarea", required: true, hint: "Your title? Your background? What you're working on? Your opinions? Your questions? Most people don't realise what they lead with — or how it lands." },
+      { id: "energy_read",       label: "What energy do you think you give off in professional settings?", type: "textarea", required: true, hint: "Intense? Calm? Guarded? Warm? Eager? Intimidating? Try to be honest rather than aspirational here." },
+      {
+        id: "signal_style",
+        label: "Which of these signals do you think you might be unintentionally sending? (Select all that apply)",
+        type: "checkboxes",
+        required: false,
+        options: [
+          "Too much expertise, not enough accessibility",
+          "Too agreeable, not enough authority",
+          "Too formal, not enough warmth",
+          "Too warm, not enough edge",
+          "Too junior in how I present",
+          "Too senior — I can seem unapproachable",
+          "I undermine myself before others can",
+          "I over-explain and it dilutes my point",
+          "I hold back and it reads as disinterest",
+          "I come across differently in writing vs in person",
+          "I don't match the environment I'm in"
+        ]
+      },
+    ]
+  },
+
+  // ── SECTION 5: THE REAL YOU
+  {
+    eyebrow: "Section 5 of 8 — The Real You",
+    title: "What people miss when they <em>misread</em> you",
+    note: "Every misread has a flip side — what's actually there that isn't being seen. This section finds it.",
+    fields: [
+      { id: "hidden_depth",     label: "What do you know about yourself that most people in professional settings don't get to see?", type: "textarea", cls: "xl", required: true, hint: "The quality, ability, or dimension of you that would genuinely surprise people if they saw it clearly." },
+      { id: "underestimated_at", label: "In what specific situations are you most likely to be underestimated?", type: "textarea", required: true },
+      { id: "overestimated_at",  label: "In what specific situations — if any — might you be overestimated or expected to be something you're not?", type: "textarea", required: false, hint: "Optional but useful — the flip side of misread is sometimes being over-read in a direction that also doesn't fit." },
+      { id: "best_self_context", label: "Describe a context or environment where you feel completely accurately seen and valued.", type: "textarea", required: true, hint: "What's different about that context? Why does it work? This tells us what conditions allow you to transmit clearly." },
+      { id: "value_sentence",    label: "If the right person — the one who would truly understand your value — read your intake, what would you want them to walk away knowing about you?", type: "textarea", cls: "xl", required: true, hint: "Write this directly. Not diplomatically. Not humbly. What is true about you that most people don't see yet?" },
+    ]
+  },
+
+  // ── SECTION 6: THE COST
+  {
+    eyebrow: "Section 6 of 8 — The Cost",
+    title: "What being misread has <em>actually cost you</em>",
+    note: "Being misread isn't just frustrating. It has tangible consequences. Naming them matters.",
+    fields: [
+      { id: "cost_professional", label: "What professional opportunities do you believe you've lost as a direct result of being misread?", type: "textarea", cls: "xl", required: true, hint: "Roles, clients, projects, promotions, collaborations — be specific if you can." },
+      { id: "cost_relational",   label: "Has being misread affected any key professional relationships? How?", type: "textarea", required: false },
+      { id: "cost_confidence",   label: "Has the experience of being misread affected how you show up now?", type: "textarea", required: true, hint: "Have you started holding back, over-explaining, shrinking, or overcompensating? What has it changed in you?" },
+      {
+        id: "misread_duration",
+        label: "How long have you been experiencing this pattern?",
+        type: "scale",
+        required: false,
+        scaleMin: 1, scaleMax: 5,
+        scaleLabels: ["Less than a year", "", "", "", "5+ years"],
+        hint: "1 = recently noticed · 5 = this has followed me for years"
+      },
+      { id: "tried_to_fix",      label: "Have you tried to address or fix this perception before? What happened?", type: "textarea", required: false, hint: "Changed how you dress, adjusted your communication, hired a coach, rewrote your bio — anything. What worked, what didn't." },
+    ]
+  },
+
+  // ── SECTION 7: CONTEXT & ENVIRONMENT
+  {
+    eyebrow: "Section 7 of 8 — Context & Environment",
+    title: "Where the misread <em>lives</em>",
+    note: "Misreads are rarely universal. They're usually specific to environments, people types, or contexts. Let's map it.",
+    fields: [
+      { id: "worst_misread_env",  label: "In what environment or context does the misread happen most?", type: "textarea", required: true, hint: "e.g. interviews, new client meetings, large groups, online/LinkedIn, male-dominated rooms, corporate settings, etc." },
+      { id: "best_env",           label: "In what environment are you most accurately read?", type: "textarea", required: true },
+      { id: "people_who_misread", label: "What type of person tends to misread you most?", type: "textarea", required: true, hint: "Think about seniority, industry background, gender, personality type — any pattern you've noticed." },
+      { id: "people_who_get_it",  label: "What type of person tends to 'get' you immediately?", type: "textarea", required: true, hint: "What do they have in common? What is it about them that allows them to see you clearly?" },
+      {
+        id: "misread_medium",
+        label: "Where does the misread happen most? (Select all that apply)",
+        type: "checkboxes",
+        required: false,
+        options: [
+          "In-person first meetings",
+          "Video calls",
+          "Written communication (email, messages)",
+          "Online presence (LinkedIn, bio, website)",
+          "Large group settings",
+          "Formal presentations",
+          "Interviews or pitches",
+          "Social or networking events",
+          "With my own team or colleagues"
+        ]
+      },
+    ]
+  },
+
+  // ── SECTION 8: FINAL DIAGNOSTIC
+  {
+    eyebrow: "Section 8 of 8 — Final Diagnostic",
+    title: "The questions most people <em>don't answer honestly</em>",
+    note: "These are the questions that produce the sharpest reports. Take your time. The quality of your answers here determines the depth of the analysis.",
+    fields: [
+      { id: "honest_contribution",  label: "What role — if any — do you think you play in how you're being misread?", type: "textarea", cls: "xl", required: true, hint: "This is not about blame. It's about agency. If there's something in how you show up that contributes to the misread, naming it is the first step to changing it." },
+      { id: "most_frustrating",     label: "Complete this sentence: 'What frustrates me most about being misread is...'", type: "textarea", required: true },
+      { id: "want_people_to_know",  label: "If you could make one thing about you immediately obvious to everyone you meet professionally, what would it be?", type: "textarea", required: true },
+      { id: "fear_of_change",       label: "Is there any part of you that is afraid of being seen more clearly? If so, what is it?", type: "textarea", required: false, hint: "Optional — but the answers here are often the most important ones in the whole intake." },
+      { id: "one_fix",              label: "If this diagnostic could only change one thing about how you are perceived, what would you hope that one thing is?", type: "textarea", required: true },
+      {
+        id: "clarity_score",
+        label: "Right now, how clearly do you feel you are being seen professionally?",
+        type: "scale",
+        required: false,
+        scaleMin: 1, scaleMax: 10,
+        scaleLabels: ["Completely misread", "", "", "", "", "", "", "", "", "Perfectly seen"],
+        hint: "1 = nobody gets it · 10 = I am seen exactly as I am"
+      },
+      { id: "anything_else",        label: "Anything else Kaylee-Jane should know before writing your report?", type: "textarea", required: false, hint: "This is your space. The things people add here are often the things that make the difference between a good report and a great one." },
+    ]
+  }
+
+];
+
+// ═══════════════════════════════════════════════════
+// STATE & INIT
+// ═══════════════════════════════════════════════════
+let current = 0;
+const total = sections.length;
+
+function startForm() {
+  document.getElementById('screen-welcome').style.display = 'none';
+  document.getElementById('screen-form').style.display = 'block';
+  buildDots();
+  renderSection(0);
+}
+
+function buildDots() {
+  const c = document.getElementById('stepDots');
+  c.innerHTML = '';
+  sections.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'step-nav__dot';
+    d.id = `dot-${i}`;
+    c.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function renderSection(idx) {
+  const s = sections[idx];
+
+  document.getElementById('introEyebrow').textContent = s.eyebrow;
+  document.getElementById('introTitle').innerHTML = s.title;
+  document.getElementById('introNote').textContent = s.note;
+  document.getElementById('stepLabel').textContent = `${idx + 1} of ${total}`;
+  document.getElementById('progressFill').style.width = (idx / total * 100) + '%';
+
+  sections.forEach((_, i) => {
+    const d = document.getElementById(`dot-${i}`);
+    d.className = 'step-nav__dot' + (i === idx ? ' active' : i < idx ? ' done' : '');
+  });
+
+  document.getElementById('btnBack').style.visibility = idx === 0 ? 'hidden' : 'visible';
+
+  const btn = document.getElementById('btnNext');
+  if (idx === total - 1) {
+    btn.innerHTML = 'Submit Diagnostic <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>';
+    btn.className = 'btn-next btn-submit';
+    btn.onclick = submitForm;
+  } else {
+    btn.innerHTML = 'Continue <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>';
+    btn.className = 'btn-next';
+    btn.onclick = nextSection;
+  }
+
+  const container = document.getElementById('fieldContainer');
+  container.innerHTML = '';
+  container.classList.remove('fade-in');
+  void container.offsetWidth;
+  container.classList.add('fade-in');
+
+  s.fields.forEach(f => renderField(f, container));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderField(f, container) {
+  const wrap = document.createElement('div');
+  wrap.className = 'field';
+  wrap.id = `fw-${f.id}`;
+
+  const lbl = document.createElement('label');
+  lbl.className = 'field__label';
+  lbl.setAttribute('for', f.id);
+  lbl.innerHTML = f.label + (f.required ? '<span class="field__req">*</span>' : '');
+  wrap.appendChild(lbl);
+
+  if (f.hint) {
+    const h = document.createElement('p');
+    h.className = 'field__hint';
+    h.textContent = f.hint;
+    wrap.appendChild(h);
+  }
+
+  if (f.type === 'textarea') {
+    const el = document.createElement('textarea');
+    el.id = f.id; el.name = f.id;
+    if (f.cls) el.className = f.cls;
+    el.value = answers[f.id] || '';
+    el.addEventListener('input', () => answers[f.id] = el.value);
+    wrap.appendChild(el);
+
+  } else if (f.type === 'scale') {
+    const sg = document.createElement('div');
+    sg.className = 'scale-wrap';
+    for (let i = f.scaleMin; i <= f.scaleMax; i++) {
+      const opt = document.createElement('div');
+      opt.className = 'scale-opt';
+      const inp = document.createElement('input');
+      inp.type = 'radio'; inp.name = f.id; inp.id = `${f.id}_${i}`; inp.value = i;
+      if (answers[f.id] == i) inp.checked = true;
+      inp.addEventListener('change', () => answers[f.id] = i);
+      const lbl2 = document.createElement('label');
+      lbl2.setAttribute('for', `${f.id}_${i}`);
+      lbl2.textContent = i;
+      opt.appendChild(inp); opt.appendChild(lbl2);
+      sg.appendChild(opt);
+    }
+    wrap.appendChild(sg);
+    const sl = document.createElement('div');
+    sl.className = 'scale-labels';
+    sl.innerHTML = `<span>${f.scaleLabels[0]}</span><span>${f.scaleLabels[f.scaleLabels.length-1]}</span>`;
+    wrap.appendChild(sl);
+
+  } else if (f.type === 'checkboxes') {
+    const grid = document.createElement('div');
+    grid.className = 'pill-grid';
+    const saved = answers[f.id] ? answers[f.id].split(', ') : [];
+    f.options.forEach(opt => {
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.id = `cb-${f.id}-${opt}`; cb.name = f.id; cb.value = opt;
+      cb.checked = saved.includes(opt);
+      cb.addEventListener('change', () => {
+        const checked = [...document.querySelectorAll(`input[name="${f.id}"]:checked`)].map(x => x.value);
+        answers[f.id] = checked.join(', ');
+      });
+      const lbl2 = document.createElement('label');
+      lbl2.setAttribute('for', `cb-${f.id}-${opt}`);
+      lbl2.textContent = opt;
+      pill.appendChild(cb); pill.appendChild(lbl2);
+      grid.appendChild(pill);
+    });
+    wrap.appendChild(grid);
+
+  } else {
+    const el = document.createElement('input');
+    el.type = f.type; el.id = f.id; el.name = f.id;
+    el.value = answers[f.id] || '';
+    el.addEventListener('input', () => answers[f.id] = el.value);
+    wrap.appendChild(el);
+  }
+
+  const err = document.createElement('p');
+  err.className = 'field__err';
+  err.textContent = 'Please complete this field before continuing.';
+  wrap.appendChild(err);
+
+  container.appendChild(wrap);
+}
+
+// ═══════════════════════════════════════════════════
+// VALIDATION
+// ═══════════════════════════════════════════════════
+function validate() {
+  let valid = true;
+  sections[current].fields.forEach(f => {
+    if (!f.required) return;
+    const wrap = document.getElementById(`fw-${f.id}`);
+    const el = document.getElementById(f.id);
+    if (!el || !el.value.trim()) {
+      wrap.classList.add('field--error');
+      valid = false;
+    } else {
+      wrap.classList.remove('field--error');
+    }
+  });
+  return valid;
+}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function nextSection() {
+  if (!validate()) return;
+  if (current < total - 1) { current++; renderSection(current); }
+}
+function prevSection() {
+  if (current > 0) { current--; renderSection(current); }
+}
+
+// ═══════════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════════
+async function submitForm() {
+  if (!validate()) return;
+  const btn = document.getElementById('btnNext');
+  btn.textContent = 'Submitting…';
+  btn.disabled = true;
+
+  const fd = new FormData();
+  fd.append('diagnostic_type', 'Misread Diagnostic');
+  Object.entries(answers).forEach(([k, v]) => { if (v) fd.append(k, v); });
+
+  try {
+    const res = await fetch('https://formspree.io/f/xyknqrlo', {
+      method: 'POST', body: fd,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      document.getElementById('screen-form').style.display = 'none';
+      const ty = document.getElementById('screen-thankyou');
+      ty.style.display = 'block';
+      ty.classList.add('fade-in');
+      document.getElementById('progressFill').style.width = '100%';
+    } else {
+      btn.innerHTML = 'Try again <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    btn.innerHTML = 'Try again <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
